@@ -79,14 +79,14 @@ def ai_trading():
    ORDER BY HIST_SEQ DESC
    LIMIT 1
   '''
-  # result_do = (query_module.fetch_all_data(query))
-  # if result_do and len(result_do[0]) > 0:
-  #   if result_do[0][0] == 'sell':
-  #     pos_stgy = ['buy', 'hold']
-  #   else:
-  #     pos_stgy = ['sell', 'hold']
-  # else:
-  #    print("No result found")
+  result_do = (query_module.fetch_all_data(query))
+  if result_do and len(result_do[0]) > 0:
+    if result_do[0][0] == 'sell':
+      pos_stgy = ['buy', 'hold']
+    else:
+      pos_stgy = ['sell', 'hold']
+  else:
+     print("No result found")
 
   my_krw = upbit.get_balance("KRW")
   my_btc = upbit.get_balance("KRW-BTC")
@@ -98,21 +98,11 @@ def ai_trading():
       "asset": {
         "KRW": my_krw,
         "BITCOIN": my_btc
+      },
+      "possible_strategy": {
+         "possible_strategy": pos_stgy
       }
   }
-  # strategy = {
-  #     "strategy": {
-  #       "price_data": json_df
-  #     },
-  #     "technical_indicators": df.to_json(),
-  #     "asset": {
-  #       "KRW": my_krw,
-  #       "BITCOIN": my_btc
-  #     },
-  #     "possible_strategy": {
-  #        "possible_strategy": pos_stgy
-  #     }
-  # }
   # print(strategy)
 
   # 2. AI에게 데이터 제공하고 판단 받기
@@ -159,11 +149,10 @@ def ai_trading():
   # access = os.getenv("UPBIT_ACCESS_KEY")
   # secret = os.getenv("UPBIT_SECRET_KEY")
   # upbit = pyupbit.Upbit(access, secret)
-  # decision = result["decision"]
-  decision = 'buy'
-  print("------------------------------------------------")
-  print("------------   " + decision + "   ------------")
-  print("-------------------------------------------------")
+  decision = result["decision"]
+  # print("------------------------------------------------")
+  # print("------------   " + decision + "   ------------")
+  # print("-------------------------------------------------")
 
   query = """
   INSERT INTO BTC_HIST (
