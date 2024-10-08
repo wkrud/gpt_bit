@@ -70,6 +70,21 @@ def ai_trading():
   # 지수 이동 평균(EMA)
   df['EMA_3'] = df['close'].ewm(span=3, adjust=False).mean()
 
+  pos_stgy = []
+  query = '''
+  SELECT DO
+    FROM BTC_HIST
+   WHERE DO != 'hold'
+     AND STATUS = 'S'
+   ORDER BY HIST_SEQ DESC
+   LIMIT 1
+  '''
+  result_do = (query_module.fetch_all_data(query))
+  if result_do[0][0] == 'sell':
+    pos_stgy = ['buy', 'hold']
+  else:
+    pos_stgy = ['sell', 'hold']
+
   my_krw = upbit.get_balance("KRW")
   my_btc = upbit.get_balance("KRW-BTC")
   strategy = {
@@ -80,6 +95,9 @@ def ai_trading():
       "asset": {
         "KRW": my_krw,
         "BITCOIN": my_btc
+      },
+      "possible_strategy": {
+         "possible_strategy": pos_stgy
       }
   }
   # print(strategy)
