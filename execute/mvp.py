@@ -67,11 +67,17 @@ def ai_trading():
   # 지수 이동 평균(EMA)
   df['EMA_3'] = df['close'].ewm(span=3, adjust=False).mean()
 
+  my_krw = upbit.get_balance("KRW")
+  my_btc = upbit.get_balance("KRW-BTC")
   strategy = {
       "strategy": {
         "price_data": json_df
       },
-      "technical_indicators": df.to_json()
+      "technical_indicators": df.to_json(),
+      "asset": {
+        "KRW": my_krw,
+        "BITCOIN": my_btc
+      }
   }
   # print(strategy)
 
@@ -174,5 +180,5 @@ def ai_trading():
 
 while True:
   import time
-  time.sleep(10)
+  time.sleep(60)
   ai_trading()
