@@ -204,5 +204,5 @@ def ai_trading():
 
 while True:
   import time
-  time.sleep(10)
+  time.sleep(60)
   ai_trading()
