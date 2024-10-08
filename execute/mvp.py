@@ -49,13 +49,14 @@ def ai_trading():
   upbit = pyupbit.Upbit(access, secret)
   # import pandas as pd
 
-  # df = pyupbit.get_ohlcv("KRW-BTC", interval="minute1")
-  btc_info = pyupbit.get_ohlcv("KRW-BTC", count=30, interval="day")
+  btc_min = pyupbit.get_ohlcv("KRW-BTC", interval="minute1")
+  btc_day = pyupbit.get_ohlcv("KRW-BTC", count=30, interval="day")
   # print(btc_info)
   # strData = str(df)
   # print(df.to_json())
-  json_df = btc_info.to_json()
-  dict_json = json.loads(json_df)['close']
+  json_min = btc_min.to_json()
+  json_day = btc_day.to_json()
+  dict_json = json.loads(json_day)['close']
   close_price = list(dict_json.values())
   close_date = list(dict_json.keys())
   data = {
@@ -92,7 +93,8 @@ def ai_trading():
   my_btc = upbit.get_balance("KRW-BTC")
   strategy = {
       "strategy": {
-        "price_data": json_df
+        "price_min": json_min,
+        "price_day": json_day
       },
       "technical_indicators": df.to_json(),
       "asset": {
@@ -161,8 +163,6 @@ def ai_trading():
     %s, %s, %s, %s, %s, %s, %s
   )
   """
-  currency = ''
-  amt = ''
   reason = result["reason"]
   status = 'F'
   fail_reason = ''
