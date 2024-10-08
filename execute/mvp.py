@@ -44,6 +44,9 @@ def ai_trading():
   # 1. 업비트 차트 데이터 가져오기 (30일 일봉)
   import pyupbit
   import json
+  access = os.getenv("UPBIT_ACCESS_KEY")
+  secret = os.getenv("UPBIT_SECRET_KEY")
+  upbit = pyupbit.Upbit(access, secret)
   # import pandas as pd
 
   # df = pyupbit.get_ohlcv("KRW-BTC", interval="minute1")
@@ -121,10 +124,10 @@ def ai_trading():
   # 3. AI의 판단에 따라 실제로 자동매매 진행하기
   import json
   result = json.loads(result)
-  import pyupbit
-  access = os.getenv("UPBIT_ACCESS_KEY")
-  secret = os.getenv("UPBIT_SECRET_KEY")
-  upbit = pyupbit.Upbit(access, secret)
+  # import pyupbit
+  # access = os.getenv("UPBIT_ACCESS_KEY")
+  # secret = os.getenv("UPBIT_SECRET_KEY")
+  # upbit = pyupbit.Upbit(access, secret)
   decision = result["decision"]
   print("------------------------------------------------")
   print("------------   " + decision + "   ------------")
