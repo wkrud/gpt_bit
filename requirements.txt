@@ -1,0 +1,8 @@
+python-dotenv
+ollama
+pyupbit
+openai
+requests
+mysql-connector-python
+yfinance
+pandas
