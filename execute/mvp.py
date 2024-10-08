@@ -80,10 +80,13 @@ def ai_trading():
    LIMIT 1
   '''
   result_do = (query_module.fetch_all_data(query))
-  if result_do[0][0] == 'sell':
-    pos_stgy = ['buy', 'hold']
+  if result_do and len(result_do[0]) > 0:
+    if result_do[0][0] == 'sell':
+      pos_stgy = ['buy', 'hold']
+    else:
+      pos_stgy = ['sell', 'hold']
   else:
-    pos_stgy = ['sell', 'hold']
+     print("No result found")
 
   my_krw = upbit.get_balance("KRW")
   my_btc = upbit.get_balance("KRW-BTC")
@@ -146,16 +149,17 @@ def ai_trading():
   # access = os.getenv("UPBIT_ACCESS_KEY")
   # secret = os.getenv("UPBIT_SECRET_KEY")
   # upbit = pyupbit.Upbit(access, secret)
-  decision = result["decision"]
+  # decision = result["decision"]
+  decision = 'buy'
   print("------------------------------------------------")
   print("------------   " + decision + "   ------------")
   print("-------------------------------------------------")
 
   query = """
   INSERT INTO BTC_HIST (
-    DO, CURRENCY, AMT, REASON, STATUS, FAIL_REASON
+    DO, INFO, BTC_AMT, KRW_AMT, REASON, STATUS, FAIL_REASON
   ) VALUE (
-    %s, %s, %s, %s, %s, %s
+    %s, %s, %s, %s, %s, %s, %s
   )
   """
   currency = ''
@@ -169,8 +173,6 @@ def ai_trading():
       if my_krw*0.9995 > 5000:
         print(upbit.buy_market_order("KRW-BTC", my_krw*0.9995))
         print("buy: ",reason)
-        currency = 'BTC'
-        amt = upbit.get_balance("KRW-BTC")
         status = 'S'
       else:
         fail_reason = '실패: krw 5000원 미만'
@@ -183,8 +185,6 @@ def ai_trading():
       if (my_btc*current_price > 5000):
         print(upbit.sell_market_order("KRW-BTC", upbit.get_balance("KRW-BTC")))
         print("sell: ",reason)
-        currency = 'KRW'
-        amt = upbit.get_balance("KRW")
         status = 'S'
       else:
         fail_reason = '실패: btc 5000원 미만'
@@ -194,12 +194,15 @@ def ai_trading():
       print(reason)
       status = 'S'
   
-  query_module.insert_data(query, (decision, currency, amt, reason, status, fail_reason))
+  my_krw = upbit.get_balance("KRW")
+  my_btc = upbit.get_balance("KRW-BTC")
+  clob_stgy = json.dumps(strategy)
+  query_module.insert_data(query, (decision.upper(), clob_stgy, my_btc, my_krw, reason, status.upper(), fail_reason))
   print("-------------------------------------")
   print("------------   ",upbit.get_balance("KRW"))
   print("-------------------------------------")
 
 while True:
   import time
-  time.sleep(60)
+  time.sleep(10)
   ai_trading()
